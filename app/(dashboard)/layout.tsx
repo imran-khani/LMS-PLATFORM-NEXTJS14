@@ -14,7 +14,7 @@ const DashboradLayout: React.FC<DashboradLayoutProps> = ({ children }) => {
             <div className="hidden md:flex w-56 fixed inset-y-0 z-50 flex-col">
                 <Sidebar />
             </div>
-            <main className="md:pl-56 h-full">{children}</main>
+            <main className="md:pl-56 pt-[80px] h-full">{children}</main>
         </div>
     );
 };

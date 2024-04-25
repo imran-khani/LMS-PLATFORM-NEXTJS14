@@ -3,6 +3,7 @@
 import { BarChart, Compass, Layout, List } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 import { usePathname } from "next/navigation";
+
 const guestRoutes = [
     {
         icon: Layout,
@@ -28,6 +29,8 @@ const teacherRoutes = [
         href: "/teacher/analytics",
     },
 ];
+
+
 
 const SidebarRoutes = () => {
     const pathname = usePathname();
