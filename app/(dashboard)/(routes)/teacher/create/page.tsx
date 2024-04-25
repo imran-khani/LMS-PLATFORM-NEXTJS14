@@ -29,7 +29,7 @@ const formSchema = z.object({
 const CreateCourse = () => {
 
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver:(formSchema)
+        resolver:zodResolver(formSchema)
     })
   return (
     <div>CreateCourse</div>
