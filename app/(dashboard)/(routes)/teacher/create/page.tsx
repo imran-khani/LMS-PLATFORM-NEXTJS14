@@ -11,12 +11,14 @@ import {
     FormControl,
     FormDescription,
     FormField,
+    FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 const formSchema = z.object({
     title: z.string().min(1, {
@@ -25,7 +27,6 @@ const formSchema = z.object({
 });
 
 const CreateCourse = () => {
-    
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -50,7 +51,41 @@ const CreateCourse = () => {
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-8 mt-8"
-                    ></form>
+                    >
+                        <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Course title</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled={isSubmitting}
+                                            placeholder="e.g 'Advance web development...'"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormDescription>
+                                        What will you teach in this course?
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <div className="flex items-center gap-x-2">
+                            <Link href={"/"}>
+                                <Button variant={"ghost"} type="button">
+                                    Cancel
+                                </Button>
+                            </Link>
+                            <Button
+                                type="submit"
+                                disabled={!isValid || isSubmitting}
+                            >
+                                Continue
+                            </Button>
+                        </div>
+                    </form>
                 </Form>
             </div>
         </div>
