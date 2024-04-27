@@ -1,29 +1,20 @@
 "use client";
 
-import * as z from "zod";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import toast from "react-hot-toast";
 import axios from "axios";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+
 import { Course } from "@prisma/client";
 
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
-} from "@/components/ui/form";
-
 import { Button } from "@/components/ui/button";
-import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
-import { useState } from "react";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
 import { FileUpload } from "@/components/fileUpload";
+
+import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
 
 const formSchema = z.object({
     imageUrl: z.string().min(1, "image is required"),
@@ -35,31 +26,25 @@ interface imageFormProps {
 }
 
 export const ImageForm = ({ initialData, courseId }: imageFormProps) => {
+    // Form editing state
     const [isEditing, setIsEditing] = useState(false);
     const router = useRouter();
+
     // toggle editing state
     const toggleEditing = () => {
         setIsEditing((prev) => !prev);
     };
 
-    // form hook with zod resolver
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            imageUrl: initialData?.imageUrl || undefined,
-        },
-    });
-
-    // destructure form state to check if the form is submitting and valid
-    const { isSubmitting, isValid } = form.formState;
-
-    // this is the function that will be called when the form is submitted
+    //  this function is called when the form is submitted
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         try {
             // make a request to the server to update the course image
             await axios.patch(`/api/courses/${courseId}`, data);
+
+            // toggle the editing state
             toggleEditing();
             toast.success("Course image updated");
+            // refresh the page
             router.refresh();
         } catch {
             toast.error("An error occurred");
