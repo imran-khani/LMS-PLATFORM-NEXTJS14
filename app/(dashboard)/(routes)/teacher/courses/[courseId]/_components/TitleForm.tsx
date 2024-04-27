@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -32,26 +34,40 @@ interface TitleFormProps {
 }
 
 export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
-    const [isEditing, setIsEditing] = useState(false);
 
+    const [isEditing, setIsEditing] = useState(false);
+    const router = useRouter()
+    // toggle editing state
+    const toggleEditing = () => {
+        setIsEditing((prev) => !prev);
+    };
+
+    // form hook with zod resolver
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: initialData,
     });
 
+    // destructure form state to check if the form is submitting and valid
     const { isSubmitting, isValid } = form.formState;
 
-    const onSubmit = async (data: z.infer<typeof formSchema>) =>
-        console.log(data);
+    // this is the function that will be called when the form is submitted
+    const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        try {
+            // make a request to the server to update the course title
+            await axios.patch(`/api/courses/${courseId}`, data);
+            toggleEditing();
+            router.refresh();
+        } catch {
+            toast.error("An error occurred");
+        }
+    };
 
     return (
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
                 Course Title
-                <Button
-                    onClick={() => setIsEditing(!isEditing)}
-                    variant={"ghost"}
-                >
+                <Button onClick={toggleEditing} variant={"ghost"}>
                     {isEditing ? (
                         <>Cancel</>
                     ) : (

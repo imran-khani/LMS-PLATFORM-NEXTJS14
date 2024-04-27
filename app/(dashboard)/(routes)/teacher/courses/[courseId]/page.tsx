@@ -18,8 +18,6 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
         },
     });
 
-    const title = course?.title;
-
     if (!course) {
         return redirect("/");
     }
