@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import { FileUpload } from "@/components/fileUpload";
 
 const formSchema = z.object({
     imageUrl: z.string().min(1, "image is required"),
@@ -103,37 +104,14 @@ export const ImageForm = ({ initialData, courseId }: imageFormProps) => {
                     </div>
                 ))}
             {isEditing && (
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-4 mt-4"
-                    >
-                        <FormField
-                            control={form.control}
-                            name="imageUrl"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Textarea
-                                            disabled={isSubmitting}
-                                            placeholder="Course image"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="flex items-center gap-x-2">
-                            <Button
-                                type="submit"
-                                disabled={!isValid || isSubmitting}
-                            >
-                                Save
-                            </Button>
-                        </div>
-                    </form>
-                </Form>
+                <FileUpload
+                    endpoint="courseImage"
+                    onChange={(url) => {
+                        if (url) {
+                            onSubmit({ imageUrl: url });
+                        }
+                    }}
+                />
             )}
         </div>
     );
