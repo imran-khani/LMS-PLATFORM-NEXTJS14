@@ -4,6 +4,8 @@ import "./globals.css";
 import ToasterProvider from "@/components/providers/ToasterProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 
+import "@uploadthing/react/styles.css";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
