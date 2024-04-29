@@ -1,15 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
-import { CircleDollarSign, File, LayoutDashboard, ListChecks } from "lucide-react";
+import { redirect } from "next/navigation";
+import { CircleDollarSign, LayoutDashboard, ListChecks } from "lucide-react";
 
 import { db } from "@/lib/db";
-import { redirect } from "next/navigation";
 import { IconBadge } from "@/components/iconBadge";
 import { TitleForm } from "./_components/TitleForm";
 import { DescriptionForm } from "./_components/DescriptionForm";
 import { ImageForm } from "./_components/ImageForm";
-import { CategoryForm } from "./_components/CategoryForm";
-
-
+import { PriceForm } from "./_components/PriceForm";
 
 const CourseIdPage = async ({
   params
@@ -29,11 +27,11 @@ const CourseIdPage = async ({
     },
   });
 
-  const categories = await db.category.findMany({
-    orderBy: {
-      name: "asc",
-    },
-  });
+//   const categories = await db.category.findMany({
+//     orderBy: {
+//       name: "asc",
+//     },
+//   });
 
   if (!course) {
     return redirect("/");
@@ -44,7 +42,6 @@ const CourseIdPage = async ({
     course.description,
     course.imageUrl,
     course.price,
-    course.categoryId,
   ];
 
   const totalFields = requiredFields.length;
@@ -56,7 +53,6 @@ const CourseIdPage = async ({
 
   return (
     <>
-     
       <div className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-y-2">
@@ -77,25 +73,38 @@ const CourseIdPage = async ({
               </h2>
             </div>
             <TitleForm
-                initialData={{ title: course.title || "" }}
+                initialData={{ title: course?.title || '' }}
                 courseId={course.id}
             />
             <DescriptionForm
-                initialData={{ description: course.description || "" }}
-                courseId={course.id}
+              initialData={{description:course?.description || ''}}
+              courseId={course.id}
             />
             <ImageForm
               initialData={course}
               courseId={course.id}
             />
-            <CategoryForm
-              initialData={course}
-              courseId={course.id}
-              options={categories.map((category) => ({
-                label: category.name,
-                value: category.id,
-              }))}
-            />
+          </div>
+          <div className="space-y-6">
+                <div>
+                    <div className="flex items-center gap-x-2">
+                        <IconBadge icon={ListChecks} />
+                        <h2 className="text-xl">Course Chapters</h2>
+                    </div>
+                    <div>
+                        TODO:CHAPTERS
+                    </div>
+                </div>
+                <div className="flex items-center gap-x-2">
+                    <IconBadge icon={CircleDollarSign} />
+                    <h2 className="text-xl">
+                        Sell your course
+                    </h2>
+                </div>
+                <PriceForm
+                initialData={{price:course?.price }}
+                courseId={course.id}
+                />
           </div>
         </div>
       </div>
