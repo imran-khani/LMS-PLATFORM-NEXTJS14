@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormMessage,
@@ -21,8 +20,9 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
+import {formatPrice} from '@/lib/priceFormat'
 const formSchema = z.object({
     price: z.coerce.number(),
 });
@@ -88,7 +88,7 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
                         !initialData.price && "text-slate-500 italic"
                     )}
                 >
-                    {initialData.price || "No Description"}
+                    {formatPrice(initialData.price ?? 0) || "No Price"}
                 </p>
             )}
             {isEditing && (
@@ -103,9 +103,11 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Textarea
+                                        <Input
+                                            type="number"
+                                            step={0.01}
                                             disabled={isSubmitting}
-                                            placeholder="Course price"
+                                            placeholder="Set Course price"
                                             {...field}
                                         />
                                     </FormControl>

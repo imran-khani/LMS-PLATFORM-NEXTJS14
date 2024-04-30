@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { CircleDollarSign, LayoutDashboard, ListChecks } from "lucide-react";
+import { CircleDollarSign, File, LayoutDashboard, ListChecks } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { IconBadge } from "@/components/iconBadge";
@@ -8,6 +8,7 @@ import { TitleForm } from "./_components/TitleForm";
 import { DescriptionForm } from "./_components/DescriptionForm";
 import { ImageForm } from "./_components/ImageForm";
 import { PriceForm } from "./_components/PriceForm";
+import { AttachmentForm } from "./_components/AttachmentForm";
 
 const CourseIdPage = async ({
   params
@@ -25,6 +26,13 @@ const CourseIdPage = async ({
       id: params.courseId,
       userId
     },
+    include:{
+        attachments:{
+            orderBy:{
+                createdAt:"asc"
+            }
+        }
+    }
   });
 
 //   const categories = await db.category.findMany({
@@ -95,6 +103,7 @@ const CourseIdPage = async ({
                         TODO:CHAPTERS
                     </div>
                 </div>
+                <div>
                 <div className="flex items-center gap-x-2">
                     <IconBadge icon={CircleDollarSign} />
                     <h2 className="text-xl">
@@ -105,6 +114,19 @@ const CourseIdPage = async ({
                 initialData={{price:course?.price }}
                 courseId={course.id}
                 />
+                </div>
+                <div>
+                <div className="flex items-center gap-x-2">
+                    <IconBadge icon={File} />
+                    <h2 className="text-xl">
+                       Resources and attachments
+                    </h2>
+                </div>
+                </div>
+                <AttachmentForm
+              initialData={course}
+              courseId={course.id}
+            />
           </div>
         </div>
       </div>
