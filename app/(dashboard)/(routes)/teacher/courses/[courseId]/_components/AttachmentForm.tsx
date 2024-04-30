@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Attachment, Course } from "@prisma/client";
@@ -14,10 +12,10 @@ import { Attachment, Course } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/fileUpload";
 
-import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
+import { ImageIcon, PlusCircle } from "lucide-react";
 
 const formSchema = z.object({
-    imageUrl: z.string().min(1, "image is required"),
+    url: z.string().min(1),
 });
 
 interface AttachmentFormProps {
@@ -66,28 +64,24 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                     )}
                 </Button>
             </div>
-            {!isEditing &&
-                (!initialData?.imageUrl ? (
-                    <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
-                        <ImageIcon className="h-10 w-10 text-slate-500" />
-                    </div>
-                ) : (
-                    <div className="relative aspect-video mt-2">
-                        <Image
-                            alt="uploaded image"
-                            fill
-                            className="object-cover rounded-md"
-                            src={initialData.imageUrl}
-                        />
-                    </div>
-                ))}
+           {
+            !isEditing && (
+                <>
+                {initialData.attachments.length === 0 && (
+                    <p className="text-sm mt-2 text-slate-500 italic">
+                        No attachments have been added to this course
+                    </p>
+                )} 
+                </>
+            )
+           }
             {isEditing && (
                 <>
                     <FileUpload
-                        endpoint="courseImage"
+                        endpoint="courseAttachment"
                         onChange={(url) => {
                             if (url) {
-                                onSubmit({ imageUrl: url });
+                                onSubmit({ url: url });
                             }
                         }}
                     />
