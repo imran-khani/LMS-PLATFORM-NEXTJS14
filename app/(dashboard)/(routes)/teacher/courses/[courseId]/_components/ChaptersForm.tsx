@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Chapter, Course } from "@prisma/client";
 import { Input } from "@/components/ui/input";
+import ChaptersList from "./ChaptersList";
 
 const formSchema = z.object({
     title: z.string().min(1)
@@ -38,6 +39,7 @@ export const ChaptersForm = ({ initialData, courseId }: DescriptionFormProps) =>
     const [isUpdating, setIsUpdating] = useState(false);
 
     const router = useRouter()
+
     // toggle editing state
     const toggleCreating = () => {
         setIsCreating((current) => !current);
@@ -122,7 +124,12 @@ export const ChaptersForm = ({ initialData, courseId }: DescriptionFormProps) =>
                 )}
                 >
                  {!initialData.chapters.length && 'No chapters added yet'}
-                 {/* TODO: add chpaters list */}
+                
+                    <ChaptersList 
+                    onEdit = {() => {}}
+                    onReorder = {() => {}}
+                    items = {initialData.chapters || []}
+                    />
                 </div>
             )}
             {
