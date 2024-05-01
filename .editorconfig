@@ -10,3 +10,12 @@ end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = false
 insert_final_newline = false
+
+[*.css]
+indent_style = tab
+trim_trailing_whitespace = true
+indent_size = 2
+
+[package.json]
+indent_size = 2
+indent_style = space

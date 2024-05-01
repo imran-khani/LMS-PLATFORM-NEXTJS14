@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import toast from "react-hot-toast";
 import axios from "axios";
 import * as z from "zod";
@@ -12,7 +11,7 @@ import { Attachment, Course } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/fileUpload";
 
-import { ImageIcon, PlusCircle } from "lucide-react";
+import { File, Loader2, PlusCircle, X } from "lucide-react";
 
 const formSchema = z.object({
     url: z.string().min(1),
@@ -26,6 +25,7 @@ interface AttachmentFormProps {
 export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
     // Form editing state
     const [isEditing, setIsEditing] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
     const router = useRouter();
 
     // toggle editing state
@@ -37,7 +37,7 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         try {
             // make a request to the server to update the course image
-            await axios.patch(`/api/courses/${courseId}`, data);
+            await axios.post(`/api/courses/${courseId}/attachments`, data);
 
             // toggle the editing state
             toggleEditing();
@@ -48,6 +48,20 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
             toast.error("An error occurred");
         }
     };
+
+    const onDelete = async (id:string)=>{
+        try {
+            setDeletingId(id);
+            await axios.delete(`/api/courses/${courseId}/attachments/${id}`)
+            toast.success("Attachment deleted")
+            router.refresh();
+        } catch  {
+            toast.error("An error occurred");
+        }
+        finally{
+            setDeletingId(null);
+        }
+    }
 
     return (
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
@@ -69,9 +83,42 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                 <>
                 {initialData.attachments.length === 0 && (
                     <p className="text-sm mt-2 text-slate-500 italic">
-                        No attachments have been added to this course
+                        No attachments
                     </p>
                 )} 
+                {
+                    initialData.attachments.length > 0 && (
+                        <div className="space-y-2">
+                            {
+                                initialData.attachments.map((attachment)=>(
+                                    <div
+                                    key={attachment.id}
+                                    className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md">
+                                    <File className="h-4 w-4 mr-2 flex-shrink-0" />
+                                    <p className="text-xs line-clamp-1">
+                                        {attachment.name}
+                                    </p>
+                                    {deletingId === attachment.id && (
+                                        <div>
+                                            <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+                                        </div>
+                                    )}
+
+                                    {
+                                        deletingId !== attachment.id && (
+                                            <button 
+                                            onClick={()=> onDelete(attachment.id)}
+                                            className="ml-auto transition opacity-75">
+                                                <X className="h-4 w-4" />
+                                            </button>
+                                        )
+                                    }
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    )
+                }
                 </>
             )
            }
@@ -93,3 +140,4 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
         </div>
     );
 };
+
