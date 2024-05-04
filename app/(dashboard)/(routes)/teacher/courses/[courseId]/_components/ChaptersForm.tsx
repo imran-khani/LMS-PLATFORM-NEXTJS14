@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -89,7 +89,14 @@ export const ChaptersForm = ({ initialData, courseId }: DescriptionFormProps) =>
     }
 
     return (
-        <div className="mt-6 border bg-slate-100 rounded-md p-4">
+        <div className="relative mt-6 border bg-slate-100 rounded-md p-4">
+            {
+                isUpdating && (
+                    <div className="absolute top-0 right-0 flex items-center justify-center h-full w-full bg-slate-500/20">
+                        <Loader2 className="animate-spin h-6 w-6 text-sky-700" />
+                    </div>
+                )
+            }
             <div className="font-medium flex items-center justify-between">
                 Course Chapters
                 <Button onClick={toggleCreating} variant={"ghost"}>
