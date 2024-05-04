@@ -29,7 +29,7 @@ const formSchema = z.object({
 });
 
 interface DescriptionFormProps {
-    initialData: Course & {chapters:Chapter[]};
+    initialData: Course & { chapters: Chapter[] };
     courseId: string;
 }
 
@@ -69,6 +69,25 @@ export const ChaptersForm = ({ initialData, courseId }: DescriptionFormProps) =>
         }
     };
 
+    //  will be called when the chapters are reordered
+    const onReorder = async (updatedData: { id: string; position: number }[]) => {
+        try {
+            setIsUpdating(true)
+            // put is api request to update the chapters order in the database
+            await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+                list: updatedData
+            })
+
+            toast.success("Chapters reordered")
+            router.refresh()
+        } catch {
+            toast.error("An error occurred");
+        }
+        finally {
+            setIsUpdating(false)
+        }
+    }
+
     return (
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
@@ -84,7 +103,7 @@ export const ChaptersForm = ({ initialData, courseId }: DescriptionFormProps) =>
                     )}
                 </Button>
             </div>
-           
+
             {isCreating && (
                 <Form {...form}>
                     <form
@@ -117,18 +136,18 @@ export const ChaptersForm = ({ initialData, courseId }: DescriptionFormProps) =>
                 </Form>
             )}
             {!isCreating && (
-                <div 
-                className={cn(
-                    'text-sm mt-2',
-                    !initialData.chapters.length && 'text-slate-500'
-                )}
+                <div
+                    className={cn(
+                        'text-sm mt-2',
+                        !initialData.chapters.length && 'text-slate-500'
+                    )}
                 >
-                 {!initialData.chapters.length && 'No chapters added yet'}
-                
-                    <ChaptersList 
-                    onEdit = {() => {}}
-                    onReorder = {() => {}}
-                    items = {initialData.chapters || []}
+                    {!initialData.chapters.length && 'No chapters added yet'}
+
+                    <ChaptersList
+                        onEdit={() => { }}
+                        onReorder={onReorder}
+                        items={initialData.chapters || []}
                     />
                 </div>
             )}

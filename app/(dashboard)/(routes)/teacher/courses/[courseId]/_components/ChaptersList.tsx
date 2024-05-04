@@ -9,7 +9,7 @@ import {
   DropResult
 } from '@hello-pangea/dnd'
 import { cn } from "@/lib/utils";
-import { Grip } from "lucide-react";
+import { Grip, Pencil } from "lucide-react";
 
 interface ChaptersListProps {
   items: Chapter[];
@@ -36,11 +36,31 @@ const ChaptersList = ({
     setChapters(items)
   }, [items])
 
+  const onDragEnd  = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(chapters);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+   const startIndex = Math.min(result.source.index, result.destination.index);
+   const endIndex = Math.max(result.source.index, result.destination.index);
+
+   const updatedChapters =items.slice(startIndex,endIndex + 1)
+
+   setChapters(items)
+   const bulkUpdateData = updatedChapters.map((chapter,index)=>({
+        id: chapter.id,
+        position: items.findIndex((item)=>item.id === chapter.id)
+    }))
+    onReorder(bulkUpdateData)
+  }
+
 
   if (!isMounted) return null;
 
   return (
-   <DragDropContext onDragEnd={()=>{}}>
+   <DragDropContext onDragEnd={onDragEnd}>
     <Droppable droppableId="chapters">
     {(provided)=>(
       <div 
@@ -83,6 +103,15 @@ const ChaptersList = ({
                         </span>
                       )
                     }
+                     <span className="px-2 py-1 bg-blue-900 text-sky-50 rounded-md text-xs">
+                          {
+                            chapter.isPublished ? 'Published' : 'Draft'
+                          }
+                        </span>
+                    <Pencil 
+                    onClick={()=>onEdit(chapter.id)}
+                    className="h-3 w-3 cursor-pointer hover:opacity-75 transition"
+                    />
                   </div>
                 </div>
               )}
@@ -90,6 +119,7 @@ const ChaptersList = ({
             </Draggable>
           ))
         }
+        {provided.placeholder}
 
       </div>
     )}
