@@ -10,7 +10,7 @@ export async function PATCH(req: Request, { params }: { params: { courseId: stri
 
         const { userId } = auth();
         if (!userId) return new NextResponse('Unauthorized', { status: 401 });
-        const values = await req.json();
+        const { isPublished, ...values } = await req.json();
 
 
         const ownerOfCourse = await db.course.findUnique({
@@ -34,9 +34,13 @@ export async function PATCH(req: Request, { params }: { params: { courseId: stri
         }
         )
 
+        //  Todo: handle video upload
+        
+        return NextResponse.json(chapter)
 
 
     } catch {
+        console.error(`Error at updating chapter ${params.chapterId} in course ${params.courseId}`)
         return new NextResponse('Internal Server Error', { status: 500 })
     }
 
