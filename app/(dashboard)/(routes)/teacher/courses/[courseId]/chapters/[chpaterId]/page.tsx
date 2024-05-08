@@ -1,11 +1,14 @@
+import { auth } from "@clerk/nextjs/server";
 
 
-const ChapterId = () => {
+const ChapterId = async ({params}:{params:{courseId:string; chapterId:string}}) => {
+
+  const {userId} = auth()
   return (
-    <div>ChapterId</div>
+    <div>
+
+    </div>
   )
 }
 
 export default ChapterId
-
-// https://youtu.be/Big_aFLmekI?t=17753
