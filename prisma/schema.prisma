@@ -57,7 +57,7 @@ model Attachment {
 }
 
 model Chapter {
-    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    id   String @id @default(auto()) @map("_id") @db.ObjectId
     title       String
     description String?
     videoUrl    String?
@@ -114,9 +114,8 @@ model Purchase {
     updatedAt DateTime @updatedAt
 }
 
-
 model StripeCustomer {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
     userId String @unique
 
     stripeCustomerId String @unique
