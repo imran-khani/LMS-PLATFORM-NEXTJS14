@@ -10,6 +10,7 @@ import Editor from "@/components/editor";
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormMessage,
@@ -23,9 +24,10 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Chapter } from "@prisma/client";
 import Preview from "@/components/preview";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
-    description: z.string().min(1, "description is required"),
+    isFree: z.boolean().default(false),
 });
 
 interface ChapterAccessFormProps {
@@ -47,7 +49,7 @@ export const ChapterAccessForm = ({ initialData, courseId, chapterId }: ChapterA
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            description: initialData.description ?? '',
+            isFree: !!initialData.isFree,
         }
     });
 
@@ -57,10 +59,10 @@ export const ChapterAccessForm = ({ initialData, courseId, chapterId }: ChapterA
     // this is the function that will be called when the form is submitted
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         try {
-            // make a request to the server to update the course description
+            // make a request to the server to update the course isFree status
             await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}`, data);
             toggleEditing();
-            toast.success("Chapter description updated");
+            toast.success("Chapter Free status updated.");
             router.refresh();
         } catch {
             toast.error("An error occurred");
@@ -70,28 +72,25 @@ export const ChapterAccessForm = ({ initialData, courseId, chapterId }: ChapterA
     return (
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
-                Chapter description
+                Chapter Access
                 <Button onClick={toggleEditing} variant={"ghost"}>
                     {isEditing ? (
                         <>Cancel</>
                     ) : (
                         <>
                             <Pencil className="h-4 w-4 mr-2" />
-                            Edit description
+                            Edit access
                         </>
                     )}
                 </Button>
             </div>
-            {!isEditing && <div className={cn(
+            {!isEditing && <p className={cn(
                 'text-sm mt-2',
-                !initialData.description && 'text-slate-500 italic'
-
-            )}>{!initialData.description && 'No Description'}
-            {initialData.description && (
-                <Preview 
-                value={initialData.description}                />
-            )}
-            </div>}
+                !initialData.description && 'text-slate-500 italic')}>
+                {
+                    initialData.isFree ? 'This chapter is free for all users' : 'This chapter is not free for all users'
+                }
+            </p>}
             {isEditing && (
                 <Form {...form}>
                     <form
@@ -100,15 +99,20 @@ export const ChapterAccessForm = ({ initialData, courseId, chapterId }: ChapterA
                     >
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="isFree"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                                     <FormControl>
-                                        <Editor
-                                            {...field}
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <div className="space-y-1 leading-none">
+                                        <FormDescription>
+                                            Check this box if you want to make this chapter free for all users
+                                        </FormDescription>
+                                    </div>
                                 </FormItem>
                             )}
                         />
