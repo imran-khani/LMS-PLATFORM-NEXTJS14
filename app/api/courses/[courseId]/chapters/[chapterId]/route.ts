@@ -79,10 +79,72 @@ export async function PATCH(req: Request, { params }: { params: { courseId: stri
 }
 
 
-export async function DELETE(req:Request,{params}:{params:{courseId:string,chapterId:string}}) {
-     try {
-        
-     } catch {
-        
-     }
+export async function DELETE(req: Request, { params }: { params: { courseId: string, chapterId: string } }) {
+    try {
+
+        const { userId } = auth()
+
+        if (!userId) return new NextResponse('Unauthorized', { status: 401 });
+
+        const owner = await db.course.findUnique({
+            where: {
+                id: params.courseId,
+                userId,
+            }
+        })
+        if (!owner) return new NextResponse('Unauthorized', { status: 401 });
+
+        const chapter = await db.chapter.findFirst({
+            where: {
+                id: params.chapterId,
+                courseId: params.courseId,
+            }
+        })
+        if (!chapter) return new NextResponse('Not Found', { status: 404 })
+
+        if (chapter.videoUrl) {
+            const existingVideo = await db.muxData.findFirst({
+                where: {
+                    chapterId: params.chapterId,
+                }
+            })
+            if (existingVideo) {
+                await mux.video.assets.delete(existingVideo.assetId)
+                await db.muxData.delete({
+                    where: {
+                        id: existingVideo.id
+                    }
+                })
+            }
+        }
+
+        const deletedChapter = await db.chapter.delete({
+            where: {
+                id: params.chapterId
+            }
+        })
+
+        const publishedChaptersInCourse = await db.chapter.findMany({
+            where: {
+                courseId: params.courseId,
+                isPublished: true,
+            }
+        })
+
+        if (!publishedChaptersInCourse.length) {
+            await db.course.update({
+                where: {
+                    id: params.courseId
+                },
+                data: {
+                    isPublished: false
+                }
+            })
+        }
+
+
+        return NextResponse.json(deletedChapter)
+    } catch {
+        return new NextResponse('Internal server error', { status: 501 })
+    }
 }
