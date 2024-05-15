@@ -7,6 +7,7 @@ import axios from "axios";
 import * as z from "zod";
 
 import { Chapter, MuxData } from "@prisma/client";
+import MuxPlayer from '@mux/mux-player-react'
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/fileUpload";
@@ -81,7 +82,9 @@ export const VideoForm = ({ initialData, courseId, chapterId }: VideoFormProps) 
                     </div>
                 ) : (
                     <div className="relative aspect-video mt-2">
-                        Video Uploaded!
+                        <MuxPlayer
+                        playbackId={initialData.muxData?.playbackId || ""}
+                        />
                     </div>
                 ))}
             {isEditing && (
@@ -109,3 +112,8 @@ export const VideoForm = ({ initialData, courseId, chapterId }: VideoFormProps) 
         </div>
     );
 };
+
+
+
+                        
+                        
