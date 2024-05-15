@@ -18,23 +18,7 @@ export async function PATCH(req: Request, { params }: { params: { courseId: stri
 
         if (!ownerOfCourse) return new NextResponse('Unauthorized', { status: 401 });
 
-        const chapter = await db.chapter.findUnique({
-            where: {
-                id: params.chapterId,
-                courseId: params.courseId,
-            }
-        })
-
-        const muxData = await db.muxData.findUnique({
-            where: {
-                chapterId: params.chapterId,
-            }
-        })
-
-        if (!chapter || !muxData || !chapter.title || !chapter.description || !chapter.videoUrl) {
-            return new NextResponse('Missing required Fields', { status: 400 })
-        }
-        const publishedChapter = await db.chapter.update({
+        const unpublishChapter = await db.chapter.update({
             where: {
                 id: params.chapterId,
                 courseId: params.courseId,
@@ -44,7 +28,7 @@ export async function PATCH(req: Request, { params }: { params: { courseId: stri
             }
         })
 
-        return NextResponse.json(publishedChapter)
+        return NextResponse.json(unpublishChapter)
 
     } catch {
         console.log('Error publishing chapter')
