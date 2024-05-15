@@ -41,12 +41,35 @@ const ChapterActions = ({
             setIsLoading(false)
         }
     }
+
+
+    const onClick = async () => {
+        try {
+            setIsLoading(true)
+            if (isPublished) {
+                axios.patch(`/api/courses/${courseId}/chapters/${chapterId}/unpublish`)
+                toast.success('Chapter unpublished')
+                router.refresh()
+            }
+            else {
+                axios.patch(`/api/courses/${courseId}/chapters/${chapterId}/publish`)
+                toast.success('Chapter published')
+                router.refresh()
+            }
+            router.refresh()
+        } catch {
+            toast.error('Something went wrong')
+        }
+        finally {
+            setIsLoading(false)
+        }
+    }
     return (
         <div
             className="flex items-center gap-x-2"
         >
             <Button
-                onClick={onDelete}
+                onClick={onClick}
                 disabled={disabled || isLoading}
                 variant={"outline"}
                 size={'sm'}
@@ -54,7 +77,7 @@ const ChapterActions = ({
                 {isPublished ? 'Unpublish' : 'Publish'}
             </Button>
             <ConfirmModal
-                onConfirm={() => { }}
+                onConfirm={onDelete}
             >
 
                 <Button
