@@ -70,19 +70,19 @@ export async function PATCH(req: Request, { params }: { params: { courseId: stri
             })
         }
 
-
-
-
-
-
         return NextResponse.json(chapter)
-
 
     } catch {
         console.error(`Error at updating chapter ${params.chapterId} in course ${params.courseId}`)
         return new NextResponse('Internal Server Error', { status: 500 })
     }
+}
 
 
-
+export async function DELETE(req:Request,{params}:{params:{courseId:string,chapterId:string}}) {
+     try {
+        
+     } catch {
+        
+     }
 }
