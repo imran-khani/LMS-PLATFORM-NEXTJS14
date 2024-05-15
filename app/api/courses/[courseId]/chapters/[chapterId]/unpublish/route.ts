@@ -28,10 +28,28 @@ export async function PATCH(req: Request, { params }: { params: { courseId: stri
             }
         })
 
+        const publishedchaperincourse = await db.chapter.findMany({
+            where: {
+                courseId: params.courseId,
+                isPublished: true
+            }
+        })
+
+        if (!publishedchaperincourse) {
+            await db.course.update({
+                where: {
+                    id: params.courseId,
+                },
+                data: {
+                    isPublished: false
+                }
+            })
+        }
+
         return NextResponse.json(unpublishChapter)
 
     } catch {
-        console.log('Error publishing chapter')
+        console.log('Error unpublishing chapter')
         return new NextResponse('Internal server error', { status: 501 })
     }
 }
