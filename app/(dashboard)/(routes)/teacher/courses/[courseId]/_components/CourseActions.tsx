@@ -2,6 +2,7 @@
 
 import ConfirmModal from "@/components/modals/confirm-modal";
 import { Button } from "@/components/ui/button";
+import useConfetti from "@/hooks/use-confetti-store";
 import axios from "axios";
 import { TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -24,6 +25,9 @@ const CourseActions = ({
 }: CourseActionsProps) => {
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const confetti = useConfetti()
+
     const router = useRouter()
 
     const onDelete = async () => {
@@ -51,9 +55,11 @@ const CourseActions = ({
             else {
                 axios.patch(`/api/courses/${courseId}/publish`)
                 toast.success('Course published')
+                confetti.onOpen()
             }
             router.refresh()
-        } catch {
+        } 
+        catch {
             toast.error('Something went wrong')
         }
         finally {
@@ -88,3 +94,7 @@ const CourseActions = ({
 }
 
 export default CourseActions
+
+
+
+// https://youtu.be/Big_aFLmekI?t=24150
