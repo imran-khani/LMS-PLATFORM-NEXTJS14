@@ -98,7 +98,7 @@ const ChaptersList = ({
                   <div className="ml-auto pr-2 flex items-center gap-x-2">
                     {
                       chapter.isFree && (
-                        <span className="px-2 py-1 bg-sky-100 text-sky-700 rounded-md text-xs">
+                        <span className="px-2 py-1 bg-emerald-500 text-white rounded-md text-xs">
                           Free
                         </span>
                       )

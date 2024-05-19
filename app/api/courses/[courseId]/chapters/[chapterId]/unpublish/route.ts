@@ -53,3 +53,5 @@ export async function PATCH(req: Request, { params }: { params: { courseId: stri
         return new NextResponse('Internal server error', { status: 501 })
     }
 }
+
+
