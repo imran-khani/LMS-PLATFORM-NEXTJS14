@@ -1,8 +1,18 @@
+import { db } from "@/lib/db"
+import Categories from "./_components/Categories"
+const Search = async() => {
 
-
-const Search = () => {
+    const categories = await db.category.findMany({
+        orderBy:{
+            name:'asc'
+        }
+    })
   return (
-    <div>Search</div>
+    <div className="p-6">
+       <Categories  
+       items={categories}
+       />
+    </div>
   )
 }
 
