@@ -58,7 +58,7 @@ const CourseActions = ({
                 confetti.onOpen()
             }
             router.refresh()
-        } 
+        }
         catch {
             toast.error('Something went wrong')
         }
@@ -94,7 +94,3 @@ const CourseActions = ({
 }
 
 export default CourseActions
-
-
-
-// https://youtu.be/Big_aFLmekI?t=24150

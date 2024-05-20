@@ -12,7 +12,7 @@ const ConfettiProvider = () => {
     if (!confetti.isOpen) return null;
     return (
         <ReactConfetti
-            className='pointer-events-none z-[100]'
+            className='pointer-events-none z-[100] w-full'
             numberOfPieces={500}
             recycle={false}
             onConfettiComplete={() => {

@@ -78,7 +78,7 @@ const CourseIdPage = async ({
             )}
 
             {
-                !course.isPublished && (
+                !course.isPublished && isComplete && (
                     <Banner
                         label="Course not published"
                     />
