@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -33,6 +34,7 @@ model Course {
     updatedAt DateTime @updatedAt
 
     @@index([categoryId])
+    @@fulltext([title])
 }
 
 model Category {
@@ -57,7 +59,7 @@ model Attachment {
 }
 
 model Chapter {
-    id   String @id @default(auto()) @map("_id") @db.ObjectId
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
     title       String
     description String?
     videoUrl    String?
