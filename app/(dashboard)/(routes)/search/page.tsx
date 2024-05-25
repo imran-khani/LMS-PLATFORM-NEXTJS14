@@ -1,12 +1,41 @@
 import { db } from "@/lib/db"
 import Categories from "./_components/Categories"
+import { getCourses } from "@/actions/get-courses"
+import { auth } from "@clerk/nextjs/server"
+import { redirect } from "next/navigation"
+import CoursesList from "@/components/CoursesList"
 import SearchInput from "@/components/search-input"
-const Search = async () => {
+
+
+
+interface SearchProps {
+    searchParams: {
+        title: string;
+        categoryId: string;
+    }
+
+}
+
+
+const Search = async ({
+    searchParams}:SearchProps
+) => {
 
     const categories = await db.category.findMany({
         orderBy: {
             name: 'asc'
         }
+    })
+
+    const {userId} = auth();
+    if(!userId){
+        redirect('/')
+    }
+
+
+    const courses = await getCourses({
+        userId,
+        ...searchParams,
     })
     return (
         <>
@@ -17,6 +46,7 @@ const Search = async () => {
                 <Categories
                     items={categories}
                 />
+                <CoursesList  items={courses} />
             </div>
         </>
     )
