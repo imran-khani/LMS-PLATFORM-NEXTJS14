@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import CourseSidebar from "./_components/CourseSidebar";
+import CourseNavbar from "./_components/CourseNavbar";
+import { Course } from "@prisma/client";
 
 const courseLayout = async ({ children, params }: { children: React.ReactNode; params: { courseId: string } }) => {
 
@@ -42,7 +44,11 @@ const courseLayout = async ({ children, params }: { children: React.ReactNode; p
     return (
         <div className="h-full">
             <div className="flex h-[80px] md:pl-80 fixed inset-y-0 w-full z-50">
-            <CourseNavbar />
+            <CourseNavbar 
+            // @ts-ignore
+             course = {course}
+             progressCount = {progress}
+            />
             </div>
             <div className="hidden md:flex h-full w-80 flex-col fixed inset-y-0 z-50">
                 <CourseSidebar 
