@@ -12,8 +12,29 @@ export async function POST(req:Request){
 
     try{
         event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
+
+        const session = event.data.object as Stripe.Checkout.Session;
+        const userId = session?.metadata?.userId;
+        const courseId = session?.metadata?.courseId;
+
+        if (event.type === 'checkout.session.completed'){
+            if (!userId || !courseId){
+                return new NextResponse("missing metadata", {status:400});
+            }
+            await db.purchase.create({
+                data:{
+                    courseId,
+                    userId
+                }
+            });
+        } else {
+
+            return new NextResponse("Unhandled event type", {status:200});
+        }
+
+        return new NextResponse(null, {status:200});
     }
     catch(e){
-        return new Response("Invalid signature", {status:400});
+        return new NextResponse("Invalid signature", {status:400});
     }
 }
