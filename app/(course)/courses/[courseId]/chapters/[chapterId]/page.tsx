@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import VideoPlayer from "./_components/VideoPlayer";
 import CourseEnrollButton from "./_components/CourseEnrollButton";
 import { Separator } from "@/components/ui/separator";
+import Preview from "@/components/preview";
 
 interface IParams {
     courseId: string;
@@ -81,6 +82,24 @@ const ChapterIdPage = async ({
                     )}
                 </div>
                 <Separator />
+                <div>
+                    <Preview value={chapter?.description!} />
+                </div>
+                {
+                    !!attachments.length   && (
+                        <>
+                        <Separator />
+                        {attachments.map((attachment) => (
+                            <a 
+                            href={attachment.url}
+                            key={attachment.id}
+                            >
+
+                            </a>
+                        ))}
+                        </>
+                    )
+                }
             </div>
         </div>
     );
