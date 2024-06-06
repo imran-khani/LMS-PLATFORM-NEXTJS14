@@ -7,6 +7,7 @@ import CourseEnrollButton from "./_components/CourseEnrollButton";
 import { Separator } from "@/components/ui/separator";
 import Preview from "@/components/preview";
 import { File } from "lucide-react";
+import CourseProgressButton from "./_components/CourseProgressButton";
 
 interface IParams {
     courseId: string;
@@ -72,7 +73,12 @@ const ChapterIdPage = async ({
                         {chapter?.title!}
                     </h2>
                     {purchase ? (
-                        <>{/* todo course progress */}</>
+                        <CourseProgressButton
+                            chapterId={params.chapterId}
+                            courseId={params.courseId}
+                            nextChapterId={nextChapter?.id}
+                            isCompleted={!!userProgress?.isCompleted}
+                        />
                     ) : (
                         <>
                             <CourseEnrollButton
